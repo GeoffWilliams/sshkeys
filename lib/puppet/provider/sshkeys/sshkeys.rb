@@ -4,8 +4,6 @@ Puppet::Type.type(:sshkeys).provide(:sshkeys) do
 
   def self.instances
     resources = []
-    puts "xxx" + $name
-    resources << new({:name => $1})
     resources
   end
 
