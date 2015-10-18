@@ -1,10 +1,22 @@
-# Run SSH keygen to create a local keypair
-class ssh_keys::ssh_keygen(
-    $user,
-    $comment = ""
-    $passphrase = ""
+define sshkeys::ssh_keygen(
+    $ensure     = present,
+    $comment    = "",
+    $passphrase = "",
+    $type       = $sshkeys::params::type,
+    $size       = $sshkeys::params::size,
 ) {
-  exec { "ssh-keygen -C ${comment} -N ${passphrase}"
-    user => $user,
-    creates => "
+  include sshkeys::params
+  $key_dir = $sshkeys::params::key_dir
+  $key_file = "${key_dir}/${name}"
+
+  if $ensure == present {
+    exec { "ssh-keygen_${key_file}":
+      command => "/usr/bin/ssh-keygen -C '${comment}' -N '${passphrase}' -t ${type} -b ${size} -f ${key_file}",
+      creates => $key_file,
+    }
+  } else {
+    file { [ $key_file, "${key_file.pub}" ]:
+      ensure => absent,
+    }
+  }
 }

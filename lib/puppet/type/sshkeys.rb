@@ -10,7 +10,7 @@ Puppet::Type.newtype(:sshkeys) do
   end
 
   # this gets exported to puppetdb
-  newproperty(:public_key) do
+  newparam(:public_key) do
     desc "The contents of the public key"
   end
 
