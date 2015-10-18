@@ -1,0 +1,14 @@
+{
+  "name": "geoffwilliams-sshkeys",
+  "version": "0.1.0",
+  "author": "geoffwilliams",
+  "summary": "ssh key generation and distribution with puppet",
+  "license": "Apache-2.0",
+  "source": "https://github.com/GeoffWilliams/sshkeys",
+  "project_page": "https://github.com/GeoffWilliams/sshkeys",
+  "issues_url": "https://github.com/GeoffWilliams/sshkeys/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+
