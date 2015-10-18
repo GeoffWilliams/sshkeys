@@ -6,7 +6,10 @@ file { "/home/rsync":
   owner  => "rsync",
   group  => "rsync",
 }
-
+host { "demo":
+  ensure => present,
+  ip     => "127.0.0.1",
+}
 sshkeys::authorize { "rsync":
   key_names => [ "rsync@demo"],
 }
