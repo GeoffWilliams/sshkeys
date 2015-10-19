@@ -5,8 +5,8 @@ define sshkeys::authorize(
 ) {
 
   include sshkeys::params
-  $authorized_keys = "${ssh_dir}/authorized_keys"
-  $known_hosts     = "${ssh_dir}/known_hosts"
+  $authorized_keys_file = "${ssh_dir}/authorized_keys"
+  $known_hosts          = "${ssh_dir}/known_hosts"
 
   $key_dir = $sshkeys::params::key_dir
 
@@ -16,7 +16,7 @@ define sshkeys::authorize(
     }
   }
 
-  concat { $authorized_keys:
+  concat { $authorized_keys_file:
     owner => $name,
     group => $name,
     mode  => "0600",
@@ -29,7 +29,7 @@ define sshkeys::authorize(
 
       concat::fragment { "sshkeys::authorize__${name}__${authorized_key}":
         ensure  => $ensure,
-        target  => $authorized_keys,
+        target  => $authorized_keys_file,
         content => file("${key_dir}/${authorized_key}.pub"),
       }
 
