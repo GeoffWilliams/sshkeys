@@ -1,5 +1,5 @@
 define sshkeys::authorize(
-    $key_names,
+    $authorized_keys,
     $ensure      = present,
     $ssh_dir     = "/home/${name}/.ssh",
 ) {
@@ -22,15 +22,15 @@ define sshkeys::authorize(
     mode  => "0600",
   }
 
-  $key_names.each |$key_name| {
-    if $key_name =~ /\w+@\w+/ {
-      $split_name = split($key_name, "@")
+  $authorized_keys.each |$authorized_key| {
+    if $authorized_key =~ /\w+@\w+/ {
+      $split_name = split($authorized_key, "@")
       $host = $split_name[1]
 
-      concat::fragment { "sshkeys::authorize__${name}__${key_name}":
+      concat::fragment { "sshkeys::authorize__${name}__${authorized_key}":
         ensure  => $ensure,
         target  => $authorized_keys,
-        content => file("${key_dir}/${key_name}.pub"),
+        content => file("${key_dir}/${authorized_key}.pub"),
       }
 
       exec { "known_host_${host}":
@@ -39,7 +39,7 @@ define sshkeys::authorize(
         unless  => "/usr/bin/ssh-keygen -F ${host}",
       }  
     } else {
-      fail("requested key '${key_name}' is not in the correct format - should be user@host")
+      fail("requested key '${authorized_key}' is not in the correct format - should be user@host")
     }
   }
 
