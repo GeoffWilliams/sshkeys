@@ -23,20 +23,24 @@ define sshkeys::authorize(
   }
 
   $key_names.each |$key_name| {
-    $split_name = split($key_name, "@")
-    $host = $split_name[1]
+    if $key_name =~ /\w+@\w+/ {
+      $split_name = split($key_name, "@")
+      $host = $split_name[1]
 
-    concat::fragment { "sshkeys::authorize__${name}__${key_name}":
-      ensure  => $ensure,
-      target  => $authorized_keys,
-      content => file("${key_dir}/${key_name}.pub"),
+      concat::fragment { "sshkeys::authorize__${name}__${key_name}":
+        ensure  => $ensure,
+        target  => $authorized_keys,
+        content => file("${key_dir}/${key_name}.pub"),
+      }
+
+      exec { "known_host_${host}":
+        user    => $name,
+        command => "/usr/bin/ssh-keyscan -H ${host} >> $known_hosts",
+        unless  => "/usr/bin/ssh-keygen -F ${host}",
+      }  
+    } else {
+      fail("requested key '${key_name}' is not in the correct format - should be user@host")
     }
-
-    exec { "known_host_${host}":
-      user    => $name,
-      command => "/usr/bin/ssh-keyscan -H ${host} >> $known_hosts",
-      unless  => "/usr/bin/ssh-keygen -F ${host}",
-    }  
   }
 
 }
