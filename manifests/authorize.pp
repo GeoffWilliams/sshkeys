@@ -1,17 +1,23 @@
 define sshkeys::authorize(
     $authorized_keys,
     $ensure      = present,
-    $ssh_dir     = "/home/${name}/.ssh",
+    $ssh_dir     = false,
 ) {
 
   include sshkeys::params
-  $authorized_keys_file = "${ssh_dir}/authorized_keys"
-  $known_hosts          = "${ssh_dir}/known_hosts"
+
+  if $ssh_dir {
+    $_ssh_dir = $ssh_dir
+  } else {
+    $_ssh_dir = "/home/${name}/.ssh"
+  }
+  $authorized_keys_file = "${_ssh_dir}/authorized_keys"
+  $known_hosts          = "${_ssh_dir}/known_hosts"
 
   $key_dir = $sshkeys::params::key_dir
 
-  if ! defined(File[$ssh_dir]) {
-    file { $ssh_dir:
+  if ! defined(File[$_ssh_dir]) {
+    file { $_ssh_dir:
       ensure => directory,
     }
   }
