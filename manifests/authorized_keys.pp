@@ -11,7 +11,7 @@ define sshkeys::authorized_keys(
 
   if $title =~ /\w+@\w+/ {
    
-    $split_name = split($authorized_key, "@")
+    $split_name = split($title, "@")
     $user = $split_name[0]
     $host = $split_name[1]
 
