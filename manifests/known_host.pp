@@ -15,7 +15,7 @@ define sshkeys::known_host(
     $known_hosts          = "${_ssh_dir}/known_hosts"
 
     exec { "known_host_${user}_${host}":
-      user    => $name,
+      user    => $user,
       command => "/usr/bin/ssh-keyscan -H ${host} >> $known_hosts",
       unless  => "/usr/bin/ssh-keygen -F ${host}",
     }
