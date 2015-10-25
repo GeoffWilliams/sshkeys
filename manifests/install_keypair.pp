@@ -35,11 +35,4 @@ define sshkeys::install_keypair(
     ensure  => file,
     content => file("${source}.pub"),
   }
-
-  exec { "known_host_${user}_${host}":
-    user    => $user,
-    command => "/usr/bin/ssh-keyscan -H ${host} >> $known_hosts",
-    unless  => "/usr/bin/ssh-keygen -F ${host}",
-  }
-
 }

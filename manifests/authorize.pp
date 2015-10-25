@@ -38,7 +38,7 @@ define sshkeys::authorize(
         content => file("${key_dir}/${authorized_key}.pub"),
       }
 
-      sshkeys::authorized_keys { "${title}@${host}":
+      sshkeys::known_host { "${title}@${host}":
         ssh_dir => $_ssh_dir,
       }
     } else {
