@@ -15,20 +15,12 @@ define sshkeys::install_keypair(
   } else {
     $_ssh_dir = "/home/${user}/.ssh"
   }
-  $known_hosts          = "${_ssh_dir}/known_hosts"
 
 
   if ! defined(File[$_ssh_dir]) {
     file { $_ssh_dir:
       ensure => directory,
     }
-  }
-
-  if $name =~ /\w+@\w+/ {
-    $split_name = split($authorized_key, "@")
-    $host = $split_name[1]
-  } else {
-    fail("requested key '${name}' is not in the correct format - should be user@host")
   }
 
 
