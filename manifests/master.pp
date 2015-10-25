@@ -6,8 +6,8 @@ class sshkeys::master(
   file { $key_dir:
     ensure => directory,
     owner  => "root",
-    group  => "root",
-    mode   => "0700",
+    group  => "pe-puppet",
+    mode   => "0750",
   }
 
   create_resources("sshkeys::ssh_keygen",$key_hash)
