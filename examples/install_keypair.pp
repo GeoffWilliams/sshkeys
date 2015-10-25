@@ -1,4 +1,4 @@
-include sshkeys::params
+include sshkeys
 user { "rsync":
   ensure => present,
 }

@@ -1,4 +1,4 @@
-include sshkeys::params
+include sshkeys
 class { "sshkeys::master":
   key_hash => {
     "rsync@demo" => {},
