@@ -11,7 +11,7 @@ host { "demo":
   ip     => "127.0.0.1",
 }
 sshkeys::authorize { "rsync":
-  authorized_keys => [ "rsync@demo"],
+  authorized_keys => [ "rsync@${::fqdn}"],
 }
 
 

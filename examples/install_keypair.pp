@@ -7,7 +7,7 @@ file { "/home/rsync":
   owner  => "rsync",
   group  => "rsync",
 }
-sshkeys::install_keypair { "rsync@demo": 
+sshkeys::install_keypair { "rsync@${::fqdn}" 
   user => "rsync",
 }
 
