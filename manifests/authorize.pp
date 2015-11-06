@@ -38,9 +38,6 @@ define sshkeys::authorize(
         content => file("${key_dir}/${authorized_key}.pub"),
       }
 
-      sshkeys::known_host { "${title}@${host}":
-        ssh_dir => $_ssh_dir,
-      }
     } else {
       fail("requested key '${authorized_key}' is not in the correct format - should be user@host")
     }
