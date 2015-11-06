@@ -16,8 +16,13 @@ define sshkeys::known_host(
 
     exec { "known_host_${user}_${host}":
       user    => $user,
-      command => "ping -c 1 ${host} && /usr/bin/ssh-keyscan -H ${host} >> $known_hosts",
-      unless  => "/usr/bin/ssh-keygen -F ${host}",
+      command => "ping -c 1 ${host} && ssh-keyscan -H ${host} >> $known_hosts",
+      unless  => "ssh-keygen -F ${host}",
+      path    => [
+          "/bin/",
+          "sbin",
+          "/usr/bin",
+      ],
     }
   } else {
       fail("title for sshkeys::known_host '${title}' is not in the correct format - should be local_user@remote_host")
