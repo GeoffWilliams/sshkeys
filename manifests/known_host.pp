@@ -16,7 +16,7 @@ define sshkeys::known_host(
 
     exec { "known_host_${user}_${host}":
       user    => $user,
-      command => "/usr/bin/ssh-keyscan -H ${host} >> $known_hosts",
+      command => "ping -c 1 ${host} && /usr/bin/ssh-keyscan -H ${host} >> $known_hosts",
       unless  => "/usr/bin/ssh-keygen -F ${host}",
     }
   } else {
