@@ -73,9 +73,7 @@ Node to apply this on:  The Puppet Master
 
 ### Installing a public/private SSH keypair onto a node
 ```puppet
-sshkeys::install_keypair { "alice@mylaptop.localdomain"
-  user => "alice",
-}
+sshkeys::install_keypair { "alice@mylaptop.localdomain": }
 ```
 Once an SSH keypair has been generated on the Puppet Master, it can be distributed to user(s).
 
@@ -83,7 +81,7 @@ This example would copy the files:
 * `/etc/sshkeys/alice@mylaptop.localdomain` (private key)
 * `/etc/sshkeys/alice@mylaptop.localdomain.pub` (public key)
 
-To the local `alice` user's `~/.ssh` directory, creating it if it doesn't already exist.  The local user and host name are derived from the title
+To the local `alice` user's `~/.ssh` directory, creating it if it doesn't already exist.  The local user and host name are derived from the title.
 
 Node to apply this on:  The node you wish to be able to SSH *FROM*
 
