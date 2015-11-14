@@ -1,8 +1,5 @@
 require 'spec_helper'
-#require 'fakefs/spec_helpers'
 describe 'sshkeys::authorize', :type => :define do
-#  include FakeFS::SpecHelpers
-#FakeFS.activate!
   let :pre_condition do
     '
     $concat_basedir = "/tmp/concat"
@@ -13,12 +10,14 @@ describe 'sshkeys::authorize', :type => :define do
   # https://github.com/TomPoulton/rspec-puppet-unit-testing/blob/master/modules/foo/spec/classes/bar_spec.rb
 
   before(:each) do
+
+    # replace puppet's file() function with one that always returns a fixed string
     MockFunction.new('file') { |f|
       f.stubs(:call).returns('DEADBEEF')
     }
   end
 
-  context "work ya bastard" do
+  context "compiles ok" do
     let :title do
       "ftp"
     end
@@ -27,16 +26,7 @@ describe 'sshkeys::authorize', :type => :define do
         :authorized_keys => "alice@mylaptop.localdomain",
       }
     end 
-    it {
-#      FakeFS.activate!
-#      puts "BEFORExxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-#      FileUtils.mkdir_p("/etc/sshkeys")
-#      File.write("/etc/sshkeys/alice@mylaptop.localdomain.pub", "hello world")
-      should compile 
-#      FakeFS.deactivate!
-
-      puts "afteryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
-    }
+    it { should compile }
   end
 
 end
