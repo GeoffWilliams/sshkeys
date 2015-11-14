@@ -48,7 +48,7 @@ define sshkeys::ssh_keygen(
       mode   => "0640",
     }
   } else {
-    file { [ $key_file, "${key_file.pub}" ]:
+    file { [ $key_file, "${key_file}.pub" ]:
       ensure => absent,
     }
   }

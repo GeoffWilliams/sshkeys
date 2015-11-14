@@ -15,7 +15,6 @@ define sshkeys::known_host(
 ) {
 
   if $title =~ /\w+@\w+/ {
-   
     $split_name = split($title, "@")
     $user = $split_name[0]
     $host = $split_name[1]
@@ -28,7 +27,7 @@ define sshkeys::known_host(
 
     exec { "known_host_${user}_${host}":
       user    => $user,
-      command => "ping -c 1 ${host} && ssh-keyscan -H ${host} >> $known_hosts",
+      command => "ping -c 1 ${host} && ssh-keyscan -H ${host} >> ${known_hosts}",
       unless  => "ssh-keygen -F ${host}",
       path    => [
           "/bin/",
