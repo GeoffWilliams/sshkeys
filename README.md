@@ -1,4 +1,5 @@
 # sshkeys
+[![Build Status](https://travis-ci.org/GeoffWilliams/sshkeys.svg)](https://travis-ci.org/GeoffWilliams/sshkeys)
 
 #### Table of Contents
 
