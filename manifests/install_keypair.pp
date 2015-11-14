@@ -38,7 +38,7 @@ define sshkeys::install_keypair(
 
       $_ssh_dir = "/home/${user}/.ssh"
     } else {
-      fail("requested key '${authorized_key}' is not in the correct format - should be user@host")
+      fail("requested key '${title}' is not in the correct format - should be user@host")
     }
   }
 

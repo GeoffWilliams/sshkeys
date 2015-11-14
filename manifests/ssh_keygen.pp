@@ -26,6 +26,11 @@ define sshkeys::ssh_keygen(
     $size       = $sshkeys::params::size,
 ) {
   include sshkeys::params
+
+  if ! ($title =~ /\w+@\w+/) {
+    fail("requested key '${title}' is not in the correct format - should be user@host")
+  }
+
   $key_dir = $sshkeys::params::key_dir
   $key_file = "${key_dir}/${title}"
 
