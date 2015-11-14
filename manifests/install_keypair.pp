@@ -1,5 +1,21 @@
+# sshkeys::install_keypair
+# ========================
+# Download a public/private SSH keypair from the Puppet Master and copy them to
+# the `~/.ssh` directory for the specified user.
+#
+# Parameters
+# ==========
+# [*source*]
+#   File on the Puppet Master to source the private key from.  The filename of
+#   the public key will be computed by appending `.pub` to this string.  This
+#   is normally derived fully from the sshkeys::params class and the resource
+#   title so is not normally needed
+# [*user*]
+#   The local system user to install the SSH keypair for
+# [*ssh_dir*]
+#   Override the default SSH directory of `/home/$user/.ssh`
 define sshkeys::install_keypair(
-    $source = "${sshkeys::params::key_dir}/${name}",
+    $source = "${sshkeys::params::key_dir}/${title}",
     $user,
     $ssh_dir = false,
 ) {

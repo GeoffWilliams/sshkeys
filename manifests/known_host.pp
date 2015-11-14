@@ -1,3 +1,15 @@
+# sshkeys::known_host
+# ===================
+# Add an entry to a local user's `authorized_keys` file
+#
+# Parameters
+# ==========
+# [*title*]
+#   Specify the local system user and remote host to connect to in the format
+#   user@host
+# [*ssh_dir*]
+#   Override the standard location of the SSH directory.  Defaults to 
+#   /home/USER/ssh.  Note that user is specified in the title ONLY
 define sshkeys::known_host(
   $ssh_dir = false,
 ) {

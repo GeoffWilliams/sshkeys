@@ -1,3 +1,23 @@
+# sshkeys::ssh_keygen
+# ===================
+# Run ssh-keygen to generate SSH keys for storage on the Puppet Master
+#
+# Parameters
+# ==========
+# [*title*]
+#   name of the key to generate, in user@host format
+# [*ensure*]
+#   state that this resource should be in.  Allowable values are `present` and 
+#   `absent`
+# [*comment*]
+#   optional comment to embed in the key file.  Default: none
+# [*passphrase*]
+#   optional passphrase to secure the private key with.  Defaults to 
+#   passwordless access
+# [*type*]
+#   override the default SSH key type to generate
+# [*size*]
+#   override the default SSH key size to generate
 define sshkeys::ssh_keygen(
     $ensure     = present,
     $comment    = "",
@@ -7,7 +27,7 @@ define sshkeys::ssh_keygen(
 ) {
   include sshkeys::params
   $key_dir = $sshkeys::params::key_dir
-  $key_file = "${key_dir}/${name}"
+  $key_file = "${key_dir}/${title}"
 
   if $ensure == present {
     exec { "ssh-keygen_${key_file}":

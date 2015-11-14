@@ -15,65 +15,115 @@
 
 ## Overview
 
-A one-maybe-two sentence summary of what the module does/what problem it solves.
-This is your 30 second elevator pitch for your module. Consider including
-OS/Puppet version it works with.
+Generates, distributes and authorises SSH keys
 
 ## Module Description
 
-If applicable, this section should have a brief description of the technology
-the module integrates with and what that integration enables. This section
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?"
+Handles SSH keys by generating them once on the Puppet Master and distributing them to other nodes as `file` resources using Puppet's `file()` function.  This avoids the need for exported resources and associated synchronisation problems.
 
-If your module has a range of functionality (installation, configuration,
-management, etc.) this is the time to mention it.
+Since SSH keys are stored on the master, this weakens security somewhat vs PKIs are intended to work.  This can be mitigated by applying the principle of least privilege to accounts that use keys in this way.  Also if your Puppet Master is compromised, its game over anyway...
 
 ## Setup
 
 ### What sshkeys affects
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
+* Generate and stores SSH keys on the Puppet Master in `/etc/sshkeys`
+* Install SSH public/private keypairs on nodes that require them
+* Sets up known hosts at the user level
+* Generates SSH public/private keypairs
+* Manages SSH key access via `~/.ssh/authorized_keys`
 
-### Setup Requirements **OPTIONAL**
+### Setup Requirements
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
-
-### Beginning with sshkeys
-
-The very basic steps needed for a user to get the module up and running.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+* Requires all SSH packages are already installed
 
 ## Usage
 
-Put the classes, types, and resources for customizing, configuring, and doing
-the fancy stuff with your module here.
+### Generating an SSH key on the Puppet Master
+```puppet
+sshkeys::ssh_keygen( "alice@mylaptop.localdomain":
+    $ensure     = present,
+)
+```
+Create a public/private SSH keypair under `/etc/sshkeys` on the Puppet Master using the `ssh-keygen` program. Title should be in the format `user`@`host` which is what the other components of the module expect to be able to find.
+
+The above declaration would create two files:
+* `/etc/sshkeys/alice@mylaptop.localdomain` (private key)
+* `/etc/sshkeys/alice@mylaptop.localdomain.pub` (public key)
+
+Node to apply this on:  The Puppet Master
+
+### Generating all SSH keys on the Puppet Master at once
+```puppet
+# $key_hash = hiera(...)
+$key_hash = {
+  "alice@mylaptop.localdomain" => {},
+}
+
+class { "sshkeys::master":
+  key_hash => $key_hash
+}
+```
+
+If you like, you can use the convenience wrapper `sskeys::master` to create all of the keys you need on the Puppet Master at once based on the value of a passed in hash.  This is ideal if you have a list of users in hiera that you wish to use.
+
+The `sshkeys::master` class will ensure that the `/etc/sshkeys` directory exists with the correct permissions and will then use `create_resources()` to generate any required SSH keys based on the contents of `key_hash`.
+
+Node to apply this on:  The Puppet Master
+
+### Installing a public/private SSH keypair onto a node
+```puppet
+sshkeys::install_keypair { "alice@mylaptop.localdomain"
+  user => "alice",
+}
+```
+Once an SSH keypair has been generated on the Puppet Master, it can be distributed to user(s).
+
+This example would copy the files:
+* `/etc/sshkeys/alice@mylaptop.localdomain` (private key)
+* `/etc/sshkeys/alice@mylaptop.localdomain.pub` (public key)
+
+To the local `alice` user's `~/.ssh` directory, creating it if it doesn't already exist.  The local user and host name are derived from the title
+
+Node to apply this on:  The node you wish to be able to SSH *FROM*
+
+### Add an entry to known hosts
+```puppet
+sshkeys::known_host( "alice@ftp.localdomain": }
+```
+
+Retrieve the host keys for `ftp.localdomain` and install them into the `/home/alice/.ssh/known_hosts`.  The local user and host name are derived from the title.
+
+Node to apply this on:  The node you wish to be able to SSH *FROM*
+
+### Granting access to an account
+``` puppet
+sshkeys::authorize { "ftp":
+  authorized_keys => [
+    "alice@mylaptop.localdomain"
+  ],
+}
+```
+Once keys have been generated, distributed and hosts keys added to `authorized_hosts`, the last step to grant SSH access is to authorise a given key to access a local system account.
+
+This example sources an SSH public key from the Puppet Master at `/etc/sshkeys/alice@mylaptop.localdomain.pub` and adds it to the `authorized_keys` file for the local `ftp` user.
+
+Since the `authorized_keys` file is generated in one go, we need to specify all keys that should be authorised at the same time, which we can do by passing an array of key names.
+
+Node to apply this on:  The node you wish to be able to SSH *TO*
 
 ## Reference
-
-Here, list the classes, types, providers, facts, etc contained in your module.
-This section should include all of the under-the-hood workings of your module so
-people know what the module is touching on their system but don't need to mess
-with things. (We are working on automating this section!)
+* `sshkeys` - Dummy class to get `sshkeys::params` in scope.  You may need to include this before using the defined resource types
+* `sshkeys::authorize` - Add keys from Puppet Master to authorized hosts
+* `sshkeys::install_keypair` - Copy keys from Puppet Master to local user account
+* `sshkeys::ssh_keygen` - Generate an SSH public/private keypair on the Puppet Master
+* `sshkeys::known_host` - Add the SSH host keys to a local user's `authorized_keys` file
+* `sshkeys::params` - Externalised variables (params pattern)
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
+Only tested on Debian and Ubuntu so far but should work on other Unix OSs with little or no modification
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc **Optional**
-
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You may also add any additional sections you feel are
-necessary or important to include here. Please use the `## ` header.
+PRs accepted
