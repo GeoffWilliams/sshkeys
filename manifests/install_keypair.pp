@@ -22,25 +22,26 @@ define sshkeys::install_keypair(
     $ssh_dir  = false,
 ) {
 
-  if $ssh_dir {
-    $_ssh_dir = $ssh_dir
-  } else {
-    if $title =~ /\w+@\w+/ {
-      $split_title = split($title, "@")
-      $user = $split_title[0]
-      $host = $split_title[1]
+  if $title =~ /\w+@\w+/ {
+    $split_title = split($title, "@")
+    $user = $split_title[0]
+    $host = $split_title[1]
 
-      File {
-        owner => $user,
-        group => $user,
-        mode  => "0600",
-      }
-
-      $_ssh_dir = "/home/${user}/.ssh"
-    } else {
-      fail("requested key '${title}' is not in the correct format - should be user@host")
+    File {
+      owner => $user,
+      group => $user,
+      mode  => "0600",
     }
+
+    if $ssh_dir {
+      $_ssh_dir = $ssh_dir
+    } else {
+      $_ssh_dir = "/home/${user}/.ssh"
+    }
+  } else {
+    fail("requested key '${title}' is not in the correct format - should be user@host")
   }
+
 
   if ! defined(File[$_ssh_dir]) {
     file { $_ssh_dir:
