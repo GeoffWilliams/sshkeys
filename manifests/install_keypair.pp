@@ -10,6 +10,8 @@
 #   be in the form `user@host`.  As well as specifying the keypair to copy from
 #   the Puppet Master, the title also denotes the local system user to install
 #   the keys for
+# [*ensure*]
+#   Whether a keypair should be present or absent
 # [*source*]
 #   File on the Puppet Master to source the private key from.  The filename of
 #   the public key will be computed by appending `.pub` to this string.  This
@@ -18,6 +20,7 @@
 # [*ssh_dir*]
 #   Override the default SSH directory of `/home/$user/.ssh`
 define sshkeys::install_keypair(
+    $ensure   = present,
     $source   = "${sshkeys::params::key_dir}/${title}",
     $ssh_dir  = false,
 ) {
@@ -52,13 +55,13 @@ define sshkeys::install_keypair(
 
   # private key
   file { "${_ssh_dir}/${name}":
-    ensure  => file,
+    ensure  => $ensure,
     content => file($source),
   }
 
   # public key
   file { "${_ssh_dir}/${name}.pub":
-    ensure  => file,
+    ensure  => $ensure,
     content => file("${source}.pub"),
   }
 }
