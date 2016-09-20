@@ -12,7 +12,7 @@ describe 'sshkeys::authorize', :type => :define do
   before(:each) do
 
     # replace puppet's file() function with one that always returns a fixed string
-    MockFunction.new('file') { |f|
+    MockFunction.new('sshkeys::sshkey') { |f|
       f.stubs(:call).returns('DEADBEEF')
     }
   end
