@@ -21,7 +21,7 @@
 #   Override the default SSH directory of `/home/$user/.ssh`
 define sshkeys::install_keypair(
     $ensure   = present,
-    $source   = "${sshkeys::params::key_dir}/${title}",
+    $source   = $title,
     $ssh_dir  = false,
 ) {
 
@@ -62,6 +62,6 @@ define sshkeys::install_keypair(
   # public key
   file { "${_ssh_dir}/${name}.pub":
     ensure  => $ensure,
-    content => sshkeys::sshkey("${source}.pub"),
+    content => sshkeys::sshkey($source, true),
   }
 }
