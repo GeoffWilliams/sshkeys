@@ -56,12 +56,12 @@ define sshkeys::install_keypair(
   # private key
   file { "${_ssh_dir}/${name}":
     ensure  => $ensure,
-    content => file($source),
+    content => sshkeys::sshkey($source),
   }
 
   # public key
   file { "${_ssh_dir}/${name}.pub":
     ensure  => $ensure,
-    content => file("${source}.pub"),
+    content => sshkeys::sshkey("${source}.pub"),
   }
 }

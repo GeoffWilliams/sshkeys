@@ -57,7 +57,7 @@ define sshkeys::authorize(
       concat::fragment { "sshkeys::authorize__${user}__${authorized_key}":
         ensure  => $ensure,
         target  => $authorized_keys_file,
-        content => file("${key_dir}/${authorized_key}.pub"),
+        content => sshkeys::sshkey("${key_dir}/${authorized_key}.pub"),
       }
 
     } else {
