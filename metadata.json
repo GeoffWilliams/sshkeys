@@ -1,6 +1,6 @@
 {
   "name": "geoffwilliams-sshkeys",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "author": "geoffwilliams",
   "summary": "ssh key generation and distribution with puppet",
   "license": "Apache-2.0",
@@ -12,4 +12,3 @@
     {"name":"puppetlabs-concat","version_requirement":">= 1.2.4"}
   ]
 }
-

@@ -14,14 +14,20 @@ Puppet::Functions.create_function(:'sshkeys::sshkey') do
 
   def sshkey(key_name, pub=false, passphrase='', comment='', type='rsa', size='2048')
 
-    if pub 
+    if pub
       ext = '.pub'
     else
       ext = ''
     end
     key_dir = '/etc/puppetlabs/puppetserver/sshkeys'
     key_file = ensure_key(key_dir, key_name, passphrase, comment, type, size)
-    File.read(key_file + ext)
+    target = key_file + ext
+    if File.exists?(target)
+      result = File.read(key_file + ext)
+    else
+      result = nil
+    end
+    result
   end
 
 end

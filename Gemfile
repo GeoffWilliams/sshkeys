@@ -1,8 +1,16 @@
-source 'https://rubygems.org'
+source ENV['GEM_SOURCE'] || 'https://rubygems.org'
+case RUBY_PLATFORM
+when /darwin/
+  gem 'CFPropertyList'
+end
+gem 'puppet', '4.9.0'
+gem 'facter', '2.4.6'
+gem 'rubocop', '0.47.1'
+gem 'rspec-puppet-facts', '1.7.0'
 
-puppetversion = ENV.key?('PUPPET_VERSION') ? "#{ENV['PUPPET_VERSION']}" : ['>= 3.3']
-gem 'puppet', puppetversion
-gem 'puppetlabs_spec_helper', '>= 0.8.2'
-gem 'puppet-lint', '>= 1.0.0'
-gem 'facter', '>= 1.7.0'
+# Workaround for PDOC-160
+gem 'puppet-strings',
+  :git => 'https://github.com/declarativesystems/puppet-strings',
+  :ref => 'no_dates'
+gem 'pdqtest', '0.3.4'
 gem 'rspec-puppet-utils'

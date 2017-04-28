@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.9
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="puppet_class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="puppet_class_list_link"
+        href="puppet_class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-sshkeys">sshkeys</h1>
+
+<p><a href="https://travis-ci.org/GeoffWilliams/sshkeys"><img
+src="https://travis-ci.org/GeoffWilliams/sshkeys.svg"></a></p>
+
+<h4 id="label-Table+of+Contents">Table of Contents</h4>
+<ol><li>
+<p><a href="#overview">Overview</a></p>
+</li><li>
+<p><a href="#module-description">Module Description - What the module does and
+why it is useful</a></p>
+</li><li>
+<p><a href="#setup">Setup - The basics of getting started with sshkeys</a></p>
+<ul><li>
+<p><a href="#what-sshkeys-affects">What sshkeys affects</a></p>
+</li><li>
+<p><a href="#setup-requirements">Setup requirements</a></p>
+</li><li>
+<p><a href="#beginning-with-sshkeys">Beginning with sshkeys</a></p>
+</li></ul>
+</li><li>
+<p><a href="#usage">Usage - Configuration options and additional
+functionality</a></p>
+</li><li>
+<p><a href="#reference">Reference - An under-the-hood peek at what the module
+is doing and how</a></p>
+</li><li>
+<p><a href="#limitations">Limitations - OS compatibility, etc.</a></p>
+</li><li>
+<p><a href="#development">Development - Guide for contributing to the
+module</a></p>
+</li></ol>
+
+<h2 id="label-Overview">Overview</h2>
+
+<p>Generates, distributes and authorises SSH keys</p>
+
+<h2 id="label-Module+Description">Module Description</h2>
+
+<p>Handles SSH keys by generating them once on the Puppet Master and
+distributing them to other nodes as <code>file</code> resources using
+Puppet&#39;s <code>file()</code> function. This avoids the need for
+exported resources and associated synchronisation problems.</p>
+
+<p>Since SSH keys are stored on the master, this weakens security somewhat vs
+PKIs are intended to work. This can be mitigated by applying the principle
+of least privilege to accounts that use keys in this way. Also if your
+Puppet Master is compromised, its game over anyway…</p>
+
+<h2 id="label-Setup">Setup</h2>
+
+<h3 id="label-What+sshkeys+affects">What sshkeys affects</h3>
+<ul><li>
+<p>Generate and stores SSH keys on the Puppet Master in
+<code>/etc/sshkeys</code></p>
+</li><li>
+<p>Install SSH public/private keypairs on nodes that require them</p>
+</li><li>
+<p>Sets up known hosts at the user level</p>
+</li><li>
+<p>Generates SSH public/private keypairs</p>
+</li><li>
+<p>Manages SSH key access via <code>~/.ssh/authorized_keys</code></p>
+</li></ul>
+
+<h3 id="label-Setup+Requirements">Setup Requirements</h3>
+<ul><li>
+<p>Requires all SSH packages are already installed</p>
+</li></ul>
+
+<h2 id="label-Usage">Usage</h2>
+
+<h3 id="label-Generating+an+SSH+key+on+the+Puppet+Master">Generating an SSH key on the Puppet Master</h3>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_sshkeys'>sshkeys</span><span class='op'>::</span><span class='id identifier rubyid_ssh_keygen'>ssh_keygen</span><span class='lparen'>(</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>alice@mylaptop.localdomain</span><span class='label_end'>&quot;:</span>
+    <span class='gvar'>$ensure</span>     <span class='op'>=</span> <span class='id identifier rubyid_present'>present</span><span class='comma'>,</span>
+<span class='rparen'>)</span>
+</code></pre>
+
+<p>Create a public/private SSH keypair under <code>/etc/sshkeys</code> on the
+Puppet Master using the <code>ssh-keygen</code> program. Title should be in
+the format <code>user</code>@<code>host</code> which is what the other
+components of the module expect to be able to find.</p>
+
+<p>The above declaration would create two files: *
+<code>/etc/sshkeys/alice@mylaptop.localdomain</code> (private key) *
+<code>/etc/sshkeys/alice@mylaptop.localdomain.pub</code> (public key)</p>
+
+<p>Node to apply this on: The Puppet Master</p>
+
+<h3 id="label-Generating+all+SSH+keys+on+the+Puppet+Master+at+once">Generating all SSH keys on the Puppet Master at once</h3>
+
+<pre class="code ruby"><code class="ruby"># $key_hash = hiera(...)
+$key_hash = {
+  &quot;alice@mylaptop.localdomain&quot; =&gt; {},
+}
+
+class { &quot;sshkeys::master&quot;:
+  key_hash =&gt; $key_hash
+}</code></pre>
+
+<p>If you like, you can use the convenience wrapper
+<code>sskeys::master</code> to create all of the keys you need on the
+Puppet Master at once based on the value of a passed in hash. This is ideal
+if you have a list of users in hiera that you wish to use.</p>
+
+<p>The <code>sshkeys::master</code> class will ensure that the
+<code>/etc/sshkeys</code> directory exists with the correct permissions and
+will then use <code>create_resources()</code> to generate any required SSH
+keys based on the contents of <code>key_hash</code>.</p>
+
+<p>Node to apply this on: The Puppet Master</p>
+
+<h3 id="label-Installing+a+public-2Fprivate+SSH+keypair+onto+a+node">Installing a public/private SSH keypair onto a node</h3>
+
+<pre class="code ruby"><code class="ruby">sshkeys::install_keypair { &quot;alice@mylaptop.localdomain&quot;: }</code></pre>
+
+<p>Once an SSH keypair has been generated on the Puppet Master, it can be
+distributed to user(s).</p>
+
+<p>This example would copy the files: *
+<code>/etc/sshkeys/alice@mylaptop.localdomain</code> (private key) *
+<code>/etc/sshkeys/alice@mylaptop.localdomain.pub</code> (public key)</p>
+
+<p>To the local <code>alice</code> user&#39;s <code>~/.ssh</code> directory,
+creating it if it doesn&#39;t already exist. The local user and host name
+are derived from the title.</p>
+
+<p>Node to apply this on: The node you wish to be able to SSH <em>FROM</em></p>
+
+<h3 id="label-Add+an+entry+to+known+hosts">Add an entry to known hosts</h3>
+
+<pre class="code ruby"><code class="ruby">sshkeys::known_host( &quot;alice@ftp.localdomain&quot;: }</code></pre>
+
+<p>Retrieve the host keys for <code>ftp.localdomain</code> and install them
+into the <code>/home/alice/.ssh/known_hosts</code>. The local user and host
+name are derived from the title.</p>
+
+<p>Node to apply this on: The node you wish to be able to SSH <em>FROM</em></p>
+
+<h3 id="label-Granting+access+to+an+account">Granting access to an account</h3>
+
+<pre class="code ruby"><code class="ruby">sshkeys::authorize { &quot;ftp&quot;:
+  authorized_keys =&gt; [
+    &quot;alice@mylaptop.localdomain&quot;
+  ],
+}</code></pre>
+
+<p>Once keys have been generated, distributed and hosts keys added to
+<code>authorized_hosts</code>, the last step to grant SSH access is to
+authorise a given key to access a local system account.</p>
+
+<p>This example sources an SSH public key from the Puppet Master at
+<code>/etc/sshkeys/alice@mylaptop.localdomain.pub</code> and adds it to the
+<code>authorized_keys</code> file for the local <code>ftp</code> user.</p>
+
+<p>Since the <code>authorized_keys</code> file is generated in one go, we need
+to specify all keys that should be authorised at the same time, which we
+can do by passing an array of key names.</p>
+
+<p>Node to apply this on: The node you wish to be able to SSH <em>TO</em></p>
+
+<h2 id="label-Reference">Reference</h2>
+<ul><li>
+<p><code>sshkeys</code> - Dummy class to get <code>sshkeys::params</code> in
+scope. You may need to include this before using the defined resource types</p>
+</li><li>
+<p><code>sshkeys::authorize</code> - Add keys from Puppet Master to authorized
+hosts</p>
+</li><li>
+<p><code>sshkeys::install_keypair</code> - Copy keys from Puppet Master to
+local user account</p>
+</li><li>
+<p><code>sshkeys::ssh_keygen</code> - Generate an SSH public/private keypair
+on the Puppet Master</p>
+</li><li>
+<p><code>sshkeys::known_host</code> - Add the SSH host keys to a local
+user&#39;s <code>authorized_keys</code> file</p>
+</li><li>
+<p><code>sshkeys::params</code> - Externalised variables (params pattern)</p>
+</li></ul>
+
+<h2 id="label-Limitations">Limitations</h2>
+
+<p>Only tested on Debian and Ubuntu so far but should work on other Unix OSs
+with little or no modification</p>
+
+<h2 id="label-Development">Development</h2>
+
+<p>PRs accepted</p>
+</div></div>
+
+      <div id="footer">
+     Generated by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
+</div>
+
+    </div>
+  </body>
+</html>
