@@ -5,8 +5,7 @@
 # puppet `file` resource.  It is an error to specify both `content` and `source`
 #
 # @param user User to install keys for
-# @param home Location of home directories.  All files will be created inside
-#   `$home/$user`
+# @param home Location of this user's home directory
 # @param group Group that will own the installed keys
 # @param id_rsa Content of the regular `id_rsa` (private key) file
 # @param id_rsa Source of the regular `id_rsa` (private key) file.  This can
@@ -22,7 +21,7 @@
 #   This can be any location understood by the puppet `file` resource
 define sshkeys::manual(
   $user                 = $title,
-  $home                 = "/home",
+  $home                 = "/home/${title}",
   $group                = undef,
   $id_rsa               = undef,
   $id_rsa_file          = undef,
