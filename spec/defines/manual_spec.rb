@@ -17,4 +17,12 @@ describe 'sshkeys::manual', :type => :define do
     it { should compile }
   end
 
+  context "with default params" do
+    let :title do
+      "alice"
+    end
+
+    it { should compile }
+  end
+
 end

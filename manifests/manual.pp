@@ -39,21 +39,21 @@ define sshkeys::manual(
     $_group = $user
   }
 
-  $id_rsa_present = pick($id_rsa, $id_rsa_file) ? {
-    undef   => 'absent',
-    default => 'present'
+  $id_rsa_present = pick($id_rsa, $id_rsa_file, false) ? {
+    false   => 'absent',
+    default => 'file'
   }
-  $id_rsa_pub_present = pick($id_rsa_pub, $id_rsa_pub_file) ? {
-    undef   => 'absent',
-    default => 'present'
+  $id_rsa_pub_present = pick($id_rsa_pub, $id_rsa_pub_file, false) ? {
+    false   => 'absent',
+    default => 'file'
   }
-  $known_hosts_present = pick($known_hosts, $known_hosts_file) ? {
-    undef   => 'absent',
-    default => 'present'
+  $known_hosts_present = pick($known_hosts, $known_hosts_file, false) ? {
+    false   => 'absent',
+    default => 'file'
   }
-  $authorized_keys_present = pick($authorized_keys, $authorized_keys_file) ? {
-    undef   => 'absent',
-    default => 'present'
+  $authorized_keys_present = pick($authorized_keys, $authorized_keys_file, false) ? {
+    false   => 'absent',
+    default => 'file'
   }
 
   File {
