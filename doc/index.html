@@ -6,7 +6,7 @@
 <title>
   File: README
   
-    &mdash; Documentation by YARD 0.9.9
+    &mdash; Documentation by YARD 0.9.12
   
 </title>
 
@@ -65,29 +65,29 @@ src="https://travis-ci.org/GeoffWilliams/sshkeys.svg"></a></p>
 
 <h4 id="label-Table+of+Contents">Table of Contents</h4>
 <ol><li>
-<p><a href="#overview">Overview</a></p>
+<p><a href="#label-Overview">Overview</a></p>
 </li><li>
-<p><a href="#module-description">Module Description - What the module does and
+<p><a href="#label-Module+description">Module Description - What the module does and
 why it is useful</a></p>
 </li><li>
-<p><a href="#setup">Setup - The basics of getting started with sshkeys</a></p>
+<p><a href="#label-Setup">Setup - The basics of getting started with sshkeys</a></p>
 <ul><li>
-<p><a href="#what-sshkeys-affects">What sshkeys affects</a></p>
+<p><a href="#label-What+sshkeys+affects">What sshkeys affects</a></p>
 </li><li>
-<p><a href="#setup-requirements">Setup requirements</a></p>
+<p><a href="#label-Setup+requirements">Setup requirements</a></p>
 </li><li>
-<p><a href="#beginning-with-sshkeys">Beginning with sshkeys</a></p>
+<p><a href="#label-Beginning+with+sshkeys">Beginning with sshkeys</a></p>
 </li></ul>
 </li><li>
-<p><a href="#usage">Usage - Configuration options and additional
+<p><a href="#label-Usage">Usage - Configuration options and additional
 functionality</a></p>
 </li><li>
-<p><a href="#reference">Reference - An under-the-hood peek at what the module
+<p><a href="#label-Reference">Reference - An under-the-hood peek at what the module
 is doing and how</a></p>
 </li><li>
-<p><a href="#limitations">Limitations - OS compatibility, etc.</a></p>
+<p><a href="#label-Limitations">Limitations - OS compatibility, etc.</a></p>
 </li><li>
-<p><a href="#development">Development - Guide for contributing to the
+<p><a href="#label-Development">Development - Guide for contributing to the
 module</a></p>
 </li></ol>
 
@@ -157,7 +157,8 @@ $key_hash = {
 
 class { &quot;sshkeys::master&quot;:
   key_hash =&gt; $key_hash
-}</code></pre>
+}
+</code></pre>
 
 <p>If you like, you can use the convenience wrapper
 <code>sskeys::master</code> to create all of the keys you need on the
@@ -173,7 +174,8 @@ keys based on the contents of <code>key_hash</code>.</p>
 
 <h3 id="label-Installing+a+public-2Fprivate+SSH+keypair+onto+a+node">Installing a public/private SSH keypair onto a node</h3>
 
-<pre class="code ruby"><code class="ruby">sshkeys::install_keypair { &quot;alice@mylaptop.localdomain&quot;: }</code></pre>
+<pre class="code ruby"><code class="ruby">sshkeys::install_keypair { &quot;alice@mylaptop.localdomain&quot;: }
+</code></pre>
 
 <p>Once an SSH keypair has been generated on the Puppet Master, it can be
 distributed to user(s).</p>
@@ -190,7 +192,8 @@ are derived from the title.</p>
 
 <h3 id="label-Add+an+entry+to+known+hosts">Add an entry to known hosts</h3>
 
-<pre class="code ruby"><code class="ruby">sshkeys::known_host( &quot;alice@ftp.localdomain&quot;: }</code></pre>
+<pre class="code ruby"><code class="ruby">sshkeys::known_host( &quot;alice@ftp.localdomain&quot;: }
+</code></pre>
 
 <p>Retrieve the host keys for <code>ftp.localdomain</code> and install them
 into the <code>/home/alice/.ssh/known_hosts</code>. The local user and host
@@ -204,7 +207,8 @@ name are derived from the title.</p>
   authorized_keys =&gt; [
     &quot;alice@mylaptop.localdomain&quot;
   ],
-}</code></pre>
+}
+</code></pre>
 
 <p>Once keys have been generated, distributed and hosts keys added to
 <code>authorized_hosts</code>, the last step to grant SSH access is to
