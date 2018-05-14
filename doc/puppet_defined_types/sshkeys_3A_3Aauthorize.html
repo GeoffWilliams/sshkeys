@@ -73,22 +73,11 @@
 <div class="docstring">
   <div class="discussion">
     
-<h1 id="label-sshkeys-3A-3Aauthorize">sshkeys::authorize</h1>
+<p>sshkeys::authorize</p>
 
 <p>Retrieve the keys listed in the authorized_keys parameter from the Puppet
 Master and add them to the authorized_keys file for the local unix user
 specified in the title</p>
-
-<h1 id="label-Parameters">Parameters</h1>
-
-<p>[<em>authorized_keys</em>]  Array of key names to source from the Puppet
-Master. These will be used to  create the authorized_keys file
-[<em>user</em>]  Local system account that this resource is granting access
-to via SSH.  Defaults to $title [<em>ensure</em>]  The state that the
-authorized_keys file should be in. Valid values are  <code>present</code>
-and <code>absent</code> [<em>ssh_dir</em>]  Override the default
-<code>.ssh</code> directory location. Defaults to 
-<code>/home/$user/.ssh</code></p>
 
   </div>
 </div>
@@ -105,6 +94,12 @@ and <code>absent</code> [<em>ssh_dir</em>]  Override the default
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>Array of key names to source from the Puppet Master. These will be used to
+create the authorized_keys file</p>
+</div>
+      
     </li>
   
     <li>
@@ -117,6 +112,12 @@ and <code>absent</code> [<em>ssh_dir</em>]  Override the default
       
         <em class="default">(defaults to: <tt>$title</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Local system account that this resource is granting access to via SSH.
+Defaults to $title</p>
+</div>
       
     </li>
   
@@ -131,6 +132,12 @@ and <code>absent</code> [<em>ssh_dir</em>]  Override the default
         <em class="default">(defaults to: <tt>present</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>The state that the authorized_keys file should be in. Valid values are
+<code>present</code> and <code>absent</code></p>
+</div>
+      
     </li>
   
     <li>
@@ -144,6 +151,12 @@ and <code>absent</code> [<em>ssh_dir</em>]  Override the default
         <em class="default">(defaults to: <tt>false</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Override the default <code>.ssh</code> directory location. Defaults to
+<code>/home/$user/.ssh</code></p>
+</div>
+      
     </li>
   
 </ul>
@@ -156,6 +169,12 @@ and <code>absent</code> [<em>ssh_dir</em>]  Override the default
         <pre class="lines">
 
 
+15
+16
+17
+18
+19
+20
 21
 22
 23
@@ -196,16 +215,10 @@ and <code>absent</code> [<em>ssh_dir</em>]  Override the default
 58
 59
 60
-61
-62
-63
-64
-65
-66
-67</pre>
+61</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/authorize.pp', line 21</span>
+        <pre class="code"><span class="info file"># File 'manifests/authorize.pp', line 15</span>
 
 define sshkeys::authorize(
     $authorized_keys,

@@ -1,22 +1,16 @@
 # sshkeys::authorize
-# ==================
+#
 # Retrieve the keys listed in the authorized_keys parameter from the Puppet
 # Master and add them to the authorized_keys file for the local unix user 
 # specified in the title
 #
-# Parameters
-# ==========
-# [*authorized_keys*]
-#   Array of key names to source from the Puppet Master.  These will be used to
+# @param authorized_keys Array of key names to source from the Puppet Master.  These will be used to
 #   create the authorized_keys file
-# [*user*]
-#   Local system account that this resource is granting access to via SSH.  
+# @param user Local system account that this resource is granting access to via SSH.
 #   Defaults to $title
-# [*ensure*]
-#   The state that the authorized_keys file should be in.  Valid values are 
+# @param ensure The state that the authorized_keys file should be in.  Valid values are
 #   `present` and `absent`
-# [*ssh_dir*]
-#   Override the default `.ssh` directory location.  Defaults to 
+# @param ssh_dir Override the default `.ssh` directory location.  Defaults to
 #   `/home/$user/.ssh`
 define sshkeys::authorize(
     $authorized_keys,

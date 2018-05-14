@@ -1,28 +1,28 @@
 # sshkeys::install_keypair
-# ========================
+#
 # Download a public/private SSH keypair from the Puppet Master and copy them to
 # the `~/.ssh` directory for the specified user.
 #
-# Parameters
-# ==========
-# [*title*]
-#   identify the key to copy from the puppet master to the local machine. Must
+# @param title identify the key to copy from the puppet master to the local machine. Must
 #   be in the form `user@host`.  As well as specifying the keypair to copy from
 #   the Puppet Master, the title also denotes the local system user to install
 #   the keys for
-# [*ensure*]
-#   Whether a keypair should be present or absent
-# [*source*]
-#   File on the Puppet Master to source the private key from.  The filename of
+# @param ensure Whether a keypair should be present or absent
+# @param source File on the Puppet Master to source the private key from.  The filename of
 #   the public key will be computed by appending `.pub` to this string.  This
 #   is normally derived fully from the sshkeys::params class and the resource
 #   title so is not normally needed
-# [*ssh_dir*]
-#   Override the default SSH directory of `/home/$user/.ssh`
+# @param ssh_dir Override the default SSH directory of `/home/$user/.ssh`
+# @param default_files Write files to `id_rsa` and `id_rsa.pub`. This is useful if your only managing a single set of
+#   keys. If not, leave this off and key files will be generated based on `title`. You can then use `ssh -i` to use the
+#   key you want.
+# @param default_filename Base filename to use when generating files with the default name.
 define sshkeys::install_keypair(
-    $ensure   = present,
-    $source   = $title,
-    $ssh_dir  = false,
+    Enum['present', 'absent'] $ensure           = present,
+    String                    $source           = $title,
+    Variant[Boolean, String]  $ssh_dir          = false,
+    Boolean                   $default_files    = false,
+    String                    $default_filename = "id_rsa",
 ) {
 
   if $title =~ /\w+@\w+/ {
@@ -52,15 +52,22 @@ define sshkeys::install_keypair(
     }
   }
 
+  if $default_files {
+    $private_key_file = "${_ssh_dir}/${default_filename}"
+    $public_key_file  = "${_ssh_dir}/${default_filename}.pub"
+  } else {
+    $private_key_file = "${_ssh_dir}/${name}"
+    $public_key_file  = "${_ssh_dir}/${name}.pub"
+  }
 
   # private key
-  file { "${_ssh_dir}/${name}":
+  file { $private_key_file:
     ensure  => $ensure,
     content => sshkeys::sshkey($source),
   }
 
   # public key
-  file { "${_ssh_dir}/${name}.pub":
+  file { $public_key_file:
     ensure  => $ensure,
     content => sshkeys::sshkey($source, true),
   }

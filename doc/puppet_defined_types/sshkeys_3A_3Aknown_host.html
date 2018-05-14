@@ -73,22 +73,32 @@
 <div class="docstring">
   <div class="discussion">
     
-<h1 id="label-sshkeys-3A-3Aknown_host">sshkeys::known_host</h1>
+<p>sshkeys::known_host</p>
 
 <p>Add an entry to a local user&#39;s <code>authorized_keys</code> file</p>
-
-<h1 id="label-Parameters">Parameters</h1>
-
-<p>[<em>title</em>]  Specify the local system user and remote host to connect
-to in the format  user@host [<em>ssh_dir</em>]  Override the standard
-location of the SSH directory. Defaults to  /home/USER/ssh. Note that user
-is specified in the title ONLY</p>
 
   </div>
 </div>
 <div class="tags">
   <p class="tag_title">Parameters:</p>
 <ul class="param">
+  
+    <li>
+      
+        <span class='name'>title</span>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Specify the local system user and remote host to connect to in the format
+user@host</p>
+</div>
+      
+    </li>
   
     <li>
       
@@ -100,6 +110,12 @@ is specified in the title ONLY</p>
       
         <em class="default">(defaults to: <tt>false</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Override the standard location of the SSH directory. Defaults to
+/home/USER/ssh. Note that user is specified in the title ONLY</p>
+</div>
       
     </li>
   
@@ -113,6 +129,10 @@ is specified in the title ONLY</p>
         <pre class="lines">
 
 
+9
+10
+11
+12
 13
 14
 15
@@ -138,14 +158,10 @@ is specified in the title ONLY</p>
 35
 36
 37
-38
-39
-40
-41
-42</pre>
+38</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/known_host.pp', line 13</span>
+        <pre class="code"><span class="info file"># File 'manifests/known_host.pp', line 9</span>
 
 define sshkeys::known_host(
   $ssh_dir = false,

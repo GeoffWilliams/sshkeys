@@ -73,23 +73,10 @@
 <div class="docstring">
   <div class="discussion">
     
-<h1 id="label-sshkeys-3A-3Ainstall_keypair">sshkeys::install_keypair</h1>
+<p>sshkeys::install_keypair</p>
 
 <p>Download a public/private SSH keypair from the Puppet Master and copy them
 to the <code>~/.ssh</code> directory for the specified user.</p>
-
-<h1 id="label-Parameters">Parameters</h1>
-
-<p>[<em>title</em>]  identify the key to copy from the puppet master to the
-local machine. Must  be in the form <code>user@host</code>. As well as
-specifying the keypair to copy from  the Puppet Master, the title also
-denotes the local system user to install  the keys for [<em>ensure</em>] 
-Whether a keypair should be present or absent [<em>source</em>]  File on
-the Puppet Master to source the private key from. The filename of  the
-public key will be computed by appending <code>.pub</code> to this string.
-This  is normally derived fully from the sshkeys::params class and the
-resource  title so is not normally needed [<em>ssh_dir</em>]  Override the
-default SSH directory of <code>/home/$user/.ssh</code></p>
 
   </div>
 </div>
@@ -99,14 +86,38 @@ default SSH directory of <code>/home/$user/.ssh</code></p>
   
     <li>
       
+        <span class='name'>title</span>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>identify the key to copy from the puppet master to the local machine. Must
+be in the form <code>user@host</code>. As well as specifying the keypair to
+copy from the Puppet Master, the title also denotes the local system user
+to install the keys for</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>ensure</span>
       
       
-        <span class='type'>(<tt>Any</tt>)</span>
+        <span class='type'>(<tt>Enum['present', 'absent']</tt>)</span>
       
       
         <em class="default">(defaults to: <tt>present</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Whether a keypair should be present or absent</p>
+</div>
       
     </li>
   
@@ -115,11 +126,19 @@ default SSH directory of <code>/home/$user/.ssh</code></p>
         <span class='name'>source</span>
       
       
-        <span class='type'>(<tt>Any</tt>)</span>
+        <span class='type'>(<tt>String</tt>)</span>
       
       
         <em class="default">(defaults to: <tt>$title</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>File on the Puppet Master to source the private key from. The filename of
+the public key will be computed by appending <code>.pub</code> to this
+string. This is normally derived fully from the sshkeys::params class and
+the resource title so is not normally needed</p>
+</div>
       
     </li>
   
@@ -128,11 +147,55 @@ default SSH directory of <code>/home/$user/.ssh</code></p>
         <span class='name'>ssh_dir</span>
       
       
-        <span class='type'>(<tt>Any</tt>)</span>
+        <span class='type'>(<tt>Variant[Boolean, String]</tt>)</span>
       
       
         <em class="default">(defaults to: <tt>false</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Override the default SSH directory of <code>/home/$user/.ssh</code></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>default_files</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Write files to <code>id_rsa</code> and <code>id_rsa.pub</code>. This is
+useful if your only managing a single set of keys. If not, leave this off
+and key files will be generated based on <code>title</code>. You can then
+use <code>ssh -i</code> to use the key you want.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>default_filename</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&quot;id_rsa&quot;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Base filename to use when generating files with the default name.</p>
+</div>
       
     </li>
   
@@ -146,6 +209,8 @@ default SSH directory of <code>/home/$user/.ssh</code></p>
         <pre class="lines">
 
 
+20
+21
 22
 23
 24
@@ -191,15 +256,24 @@ default SSH directory of <code>/home/$user/.ssh</code></p>
 64
 65
 66
-67</pre>
+67
+68
+69
+70
+71
+72
+73
+74</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/install_keypair.pp', line 22</span>
+        <pre class="code"><span class="info file"># File 'manifests/install_keypair.pp', line 20</span>
 
 define sshkeys::install_keypair(
-    $ensure   = present,
-    $source   = $title,
-    $ssh_dir  = false,
+    Enum[&#39;present&#39;, &#39;absent&#39;] $ensure           = present,
+    String                    $source           = $title,
+    Variant[Boolean, String]  $ssh_dir          = false,
+    Boolean                   $default_files    = false,
+    String                    $default_filename = &quot;id_rsa&quot;,
 ) {
 
   if $title =~ /\w+@\w+/ {
@@ -229,15 +303,22 @@ define sshkeys::install_keypair(
     }
   }
 
+  if $default_files {
+    $private_key_file = &quot;${_ssh_dir}/${default_filename}&quot;
+    $public_key_file  = &quot;${_ssh_dir}/${default_filename}.pub&quot;
+  } else {
+    $private_key_file = &quot;${_ssh_dir}/${name}&quot;
+    $public_key_file  = &quot;${_ssh_dir}/${name}.pub&quot;
+  }
 
   # private key
-  file { &quot;${_ssh_dir}/${name}&quot;:
+  file { $private_key_file:
     ensure  =&gt; $ensure,
     content =&gt; sshkeys::sshkey($source),
   }
 
   # public key
-  file { &quot;${_ssh_dir}/${name}.pub&quot;:
+  file { $public_key_file:
     ensure  =&gt; $ensure,
     content =&gt; sshkeys::sshkey($source, true),
   }
