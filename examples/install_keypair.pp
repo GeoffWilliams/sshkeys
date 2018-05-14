@@ -1,4 +1,3 @@
-include sshkeys
 user { "rsync":
   ensure => present,
 }
