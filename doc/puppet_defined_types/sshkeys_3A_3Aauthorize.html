@@ -202,8 +202,7 @@ and <code>absent</code> [<em>ssh_dir</em>]  Override the default
 64
 65
 66
-67
-68</pre>
+67</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/authorize.pp', line 21</span>
@@ -245,7 +244,6 @@ define sshkeys::authorize(
       $host = $split_title[1]
 
       concat::fragment { &quot;sshkeys::authorize__${user}__${authorized_key}&quot;:
-        ensure  =&gt; $ensure,
         target  =&gt; $authorized_keys_file,
         content =&gt; sshkeys::sshkey($authorized_key, true),
       }

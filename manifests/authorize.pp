@@ -55,7 +55,6 @@ define sshkeys::authorize(
       $host = $split_title[1]
 
       concat::fragment { "sshkeys::authorize__${user}__${authorized_key}":
-        ensure  => $ensure,
         target  => $authorized_keys_file,
         content => sshkeys::sshkey($authorized_key, true),
       }
