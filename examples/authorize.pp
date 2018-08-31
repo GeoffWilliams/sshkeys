@@ -1,17 +1,20 @@
-user { "rsync":
-  ensure => present,
-}
-file { "/home/rsync":
-  ensure => directory,
-  owner  => "rsync",
-  group  => "rsync",
-}
-host { "demo":
-  ensure => present,
-  ip     => "127.0.0.1",
-}
-sshkeys::authorize { "rsync":
-  authorized_keys => [ "rsync@${::fqdn}"],
+# @PDQTest
+["gill", "helen"].each |$user| {
+  user { $user:
+    ensure => present,
+  }
+  file { "/home/${user}":
+    ensure => directory,
+    owner  => $user,
+    group  => $user,
+  }
 }
 
+sshkeys::authorize { "gill":
+  authorized_keys => "gill@localhost",
+}
+
+sshkeys::authorize { "helen":
+  authorized_keys => ["gill@localhost", "helen@localhost"],
+}
 

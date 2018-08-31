@@ -1,14 +1,41 @@
-# Sshkeys::Manual
+# @summary Distribute pre-generated SSH keys, `authorized_hosts` and `known_hosts`
 #
-# Manually import a set of ssh keys for a given user.  File can be supplied
-# inline as strings or via URIs suitable for the `source` attribute of the
-# puppet `file` resource.  It is an error to specify both `content` and `source`
+# Manage the `~/.ssh` directory and any or all of:
+#   * `~/.ssh/id_rsa`
+#   * `~/.ssh/id_rsa.pub`
+#   * `~/.ssh/known_hosts`
+#   * `~/.ssh/authorized_keys`
+#
+# For the given `user`, normally supplied in `title`.
+#
+# Files can be supplied:
+#   * Inline - Write the supplied content directly to file (`file` resource `content`)
+#   * Filename - Write file using this URI (`file` resource `source`)
+#
+# It is an error to specify both `content` and `source`.
+#
+# @example Writing SSH connection settings by content
+#   sshkeys::manual { "alice":
+#     id_rsa          => $id_rsa,
+#     id_rsa_pub      => $id_rsa_pub,
+#     known_hosts     => $known_hosts,
+#     authorized_keys => $authorized_keys,
+#   }
+#
+# @example Writing SSH connection settings by file URI
+#   # You can use any URI supported by the puppet `file` resource `source` parameter...
+#   sshkeys::manual { "bob":
+#     id_rsa_file          => "/testcase/spec/mock/keys/bob/id_rsa",
+#     id_rsa_pub_file      => "/testcase/spec/mock/keys/bob/id_rsa.pub",
+#     known_hosts_file     => "/testcase/spec/mock/keys/known_hosts",
+#     authorized_keys_file => "/testcase/spec/mock/keys/bob/authorized_keys",
+#   }
 #
 # @param user User to install keys for
 # @param home Location of this user's home directory
 # @param group Group that will own the installed keys
 # @param id_rsa Content of the regular `id_rsa` (private key) file
-# @param id_rsa Source of the regular `id_rsa` (private key) file.  This can
+# @param id_rsa_file Source of the regular `id_rsa` (private key) file.  This can
 #   be any location understood by the puppet `file` resource
 # @param id_rsa_pub Content of the regular `id_rsa.pub` (public key) file
 # @param id_rsa_pub_file Source of the regular `id_rsa_pub` (public key) file.
@@ -20,17 +47,17 @@
 # @param authorized_keys_file Source of the regular `authorized_keys` file.
 #   This can be any location understood by the puppet `file` resource
 define sshkeys::manual(
-  $user                 = $title,
-  $home                 = "/home/${title}",
-  $group                = undef,
-  $id_rsa               = undef,
-  $id_rsa_file          = undef,
-  $id_rsa_pub           = undef,
-  $id_rsa_pub_file      = undef,
-  $known_hosts          = undef,
-  $known_hosts_file     = undef,
-  $authorized_keys      = undef,
-  $authorized_keys_file = undef,
+  String            $user                 = $title,
+  String            $home                 = "/home/${title}",
+  Optional[String]  $group                = undef,
+  Optional[String]  $id_rsa               = undef,
+  Optional[String]  $id_rsa_file          = undef,
+  Optional[String]  $id_rsa_pub           = undef,
+  Optional[String]  $id_rsa_pub_file      = undef,
+  Optional[String]  $known_hosts          = undef,
+  Optional[String]  $known_hosts_file     = undef,
+  Optional[String]  $authorized_keys      = undef,
+  Optional[String]  $authorized_keys_file = undef,
 ) {
 
   if $group {

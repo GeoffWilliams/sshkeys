@@ -1,13 +1,18 @@
-# sshkeys::known_host
+# @summary Setup `known_hosts` file for a given user and host
 #
-# Add an entry to a local user's `authorized_keys` file
+# Test to see whether `ssh-keygen` thinks a particular host is in the `known_hosts` file. If
+# it isn't, obtain and store the key using `ssh-keyscan`.
+#
+# @example
+#   sshkeys::known_host{"frank@localhost":}
+#   # `ssh-keyscan` on `localhost`, results saved to `/home/frank/.ssh/known_hosts`
 #
 # @param title Specify the local system user and remote host to connect to in the format
-#   user@host
+#   `user@host`
 # @param ssh_dir Override the standard location of the SSH directory.  Defaults to
-#   /home/USER/ssh.  Note that user is specified in the title ONLY
+#   /home/`user`/ssh.  Note that `user` is specified in `title` ONLY
 define sshkeys::known_host(
-  $ssh_dir = false,
+  Optional[String]  $ssh_dir = undef,
 ) {
 
   if $title =~ /\w+@\w+/ {
@@ -19,7 +24,7 @@ define sshkeys::known_host(
     } else {
       $_ssh_dir = "/home/${user}/.ssh"
     }
-    $known_hosts          = "${_ssh_dir}/known_hosts"
+    $known_hosts = "${_ssh_dir}/known_hosts"
 
     exec { "known_host_${user}_${host}":
       user    => $user,

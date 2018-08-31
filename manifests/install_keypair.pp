@@ -1,7 +1,38 @@
-# sshkeys::install_keypair
+# @summary Generate a public/private keypair on the Puppet Master and distribute to node
 #
-# Download a public/private SSH keypair from the Puppet Master and copy them to
-# the `~/.ssh` directory for the specified user.
+# We use a custom function `sshkeys::sshkey` to run `ssh-keygen` on the Puppet Master
+# to generate the keys to download if they are missing. This allows us to install
+# they keypairs without using exported resources etc. One obvious downside of this
+# approach is that the private keys will exist on the master. This is an accepted risk
+# if you want to use this approach.
+#
+# If you already have a set of keys you want to use, you could replace the files on
+# the master yourself in the `/etc/puppetlabs/puppetserver/sshkeys` directory, or look
+# at the `sshkeys::manual` type to copy known keys directly.
+#
+# You can also use this class to remove a keypair from a node. The files will remain on
+# master until removed manually, however.
+#
+# @note Limitation: only one `user@host` combination can be defined per host. If you need
+# to copy the same key multiple times, copy it once with this class and then come up
+# with some other way to copy the remaining files.
+#
+# @example Creating default SSH keys
+#   sshkeys::install_keypair { "charles@localhost":
+#     default_files => true,
+#   }
+#   # Would create /home/charles/.ssh/id_rsa
+#
+# @example Creating SSH keys based on name
+#   sshkeys::install_keypair { "diane@localhost": }
+#   # Would create /home/diane/.ssh/diane@localhost
+#
+# @example Removing default SSH keys for `eve` user
+#   sshkeys::install_keypair { "eve@localhost":
+#     ensure        => absent,
+#     default_files => true,
+#   }
+#   # Would delete `/home/eve/.ssh/id_rsa` and `/home/eve/.ssh/id_rsa.pub`
 #
 # @param title identify the key to copy from the puppet master to the local machine. Must
 #   be in the form `user@host`.  As well as specifying the keypair to copy from
@@ -20,7 +51,7 @@
 define sshkeys::install_keypair(
     Enum['present', 'absent'] $ensure           = present,
     String                    $source           = $title,
-    Variant[Boolean, String]  $ssh_dir          = false,
+    Optional[String]          $ssh_dir          = undef,
     Boolean                   $default_files    = false,
     String                    $default_filename = "id_rsa",
 ) {
@@ -60,15 +91,23 @@ define sshkeys::install_keypair(
     $public_key_file  = "${_ssh_dir}/${name}.pub"
   }
 
+  if $ensure == present {
+    $private_key_content = sshkeys::sshkey($source)
+    $public_key_content  = sshkeys::sshkey($source, true)
+  } else {
+    $private_key_content = undef
+    $public_key_content  = undef
+  }
+
   # private key
   file { $private_key_file:
     ensure  => $ensure,
-    content => sshkeys::sshkey($source),
+    content => $private_key_content,
   }
 
   # public key
   file { $public_key_file:
     ensure  => $ensure,
-    content => sshkeys::sshkey($source, true),
+    content => $public_key_content,
   }
 }
