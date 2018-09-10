@@ -1,6 +1,6 @@
 {
   "name": "geoffwilliams-sshkeys",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "geoffwilliams",
   "summary": "ssh key generation and distribution with puppet",
   "license": "Apache-2.0",

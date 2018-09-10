@@ -60,6 +60,8 @@ sshkeys::manual { "alice":
   id_rsa_pub      => $id_rsa_pub,
   known_hosts     => $known_hosts,
   authorized_keys => $authorized_keys,
+  group           => "alice",
+  home            => "/home/alice",
 }
 
 # setup bob and allow root user to access
@@ -68,4 +70,5 @@ sshkeys::manual { "bob":
   id_rsa_pub_file      => "/testcase/spec/mock/keys/bob/id_rsa.pub",
   known_hosts_file     => "/testcase/spec/mock/keys/known_hosts",
   authorized_keys_file => "/testcase/spec/mock/keys/bob/authorized_keys",
+  group                => 1000,
 }

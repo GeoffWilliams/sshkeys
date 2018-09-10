@@ -47,17 +47,17 @@
 # @param authorized_keys_file Source of the regular `authorized_keys` file.
 #   This can be any location understood by the puppet `file` resource
 define sshkeys::manual(
-  String            $user                 = $title,
-  String            $home                 = "/home/${title}",
-  Optional[String]  $group                = undef,
-  Optional[String]  $id_rsa               = undef,
-  Optional[String]  $id_rsa_file          = undef,
-  Optional[String]  $id_rsa_pub           = undef,
-  Optional[String]  $id_rsa_pub_file      = undef,
-  Optional[String]  $known_hosts          = undef,
-  Optional[String]  $known_hosts_file     = undef,
-  Optional[String]  $authorized_keys      = undef,
-  Optional[String]  $authorized_keys_file = undef,
+  String                        $user                 = $title,
+  String                        $home                 = "/home/${title}",
+  Variant[Integer,String,Undef] $group                = undef,
+  Optional[String]              $id_rsa               = undef,
+  Optional[String]              $id_rsa_file          = undef,
+  Optional[String]              $id_rsa_pub           = undef,
+  Optional[String]              $id_rsa_pub_file      = undef,
+  Optional[String]              $known_hosts          = undef,
+  Optional[String]              $known_hosts_file     = undef,
+  Optional[String]              $authorized_keys      = undef,
+  Optional[String]              $authorized_keys_file = undef,
 ) {
 
   if $group {

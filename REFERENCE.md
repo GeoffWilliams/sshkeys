@@ -275,7 +275,7 @@ Default value: "/home/${title}"
 
 ##### `group`
 
-Data type: `Optional[String]`
+Data type: `Variant[Integer,String,Undef]`
 
 Group that will own the installed keys
 
