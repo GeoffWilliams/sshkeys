@@ -40,7 +40,7 @@ sshkeys::install_keypair { "eve@localhost":
 }
 
 sshkeys::install_keypair { "zoe@localhost":
-  ensure        => absent,
-  ssh_dir       => "/home/eve/.ssh",
+  ensure  => absent,
+  ssh_dir => "/home/eve/.ssh",
 }
 
