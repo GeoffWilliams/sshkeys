@@ -1,6 +1,6 @@
 # *File originally created by PDQTest*
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
-gem 'pdqtest', '2.0.2'
+gem 'pdqtest', '2.0.3'
 gem 'puppet-strings', '2.1.0'
 gem 'puppet-lint', '2.3.6'
 gem 'puppet-syntax', '2.4.1'

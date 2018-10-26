@@ -306,10 +306,6 @@ Purge any unmanaged `id_rsa`, `id_rsa.pub`,
 
 Default value: `false`
 
-##### `purge_unmanaged_key`
-
-Purge any unmanaged `known_hosts` file
-
 ##### `id_rsa`
 
 Data type: `Optional[String]`

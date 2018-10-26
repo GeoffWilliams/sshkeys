@@ -49,7 +49,6 @@
 # @param group Group that will own the installed keys
 # @param purge_unmanaged Purge any unmanaged `id_rsa`, `id_rsa.pub`,
 #   `known_hosts`, `authorized_keys` files
-# @param purge_unmanaged_key Purge any unmanaged `known_hosts` file
 # @param id_rsa Content of the regular `id_rsa` (private key) file
 # @param id_rsa_file Source of the regular `id_rsa` (private key) file.  This can
 #   be any location understood by the puppet `file` resource
