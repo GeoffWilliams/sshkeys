@@ -9,10 +9,15 @@
 # For the given `user`, normally supplied in `title`.
 #
 # Files can be supplied:
-#   * Inline - Write the supplied content directly to file (`file` resource `content`)
+#   * Inline - Write the supplied content directly to file (`file` resource
+#     `content`)
 #   * Filename - Write file using this URI (`file` resource `source`)
 #
-# It is an error to specify both `content` and `source`.
+# It is an error to specify both `content` and `source`. Where content is not
+# explicitly mananagd by this Puppet type, we will leave it alone and just fix
+# permissions unless the `purge_unmanaged` parameter is set `true`, in which
+# case any of the above files will be deleted if we were not supposed to set
+# content inside them.
 #
 # @example Writing SSH connection settings by content
 #   sshkeys::manual { "alice":
@@ -31,9 +36,20 @@
 #     authorized_keys_file => "/testcase/spec/mock/keys/bob/authorized_keys",
 #   }
 #
+# @example Purge unmanaged SSH files
+#   # deletes Ingrid's `known_hosts`, `id_rsa`, `id_rsa.pub`) and sets content
+#   # of `authorized_keys` file to the string `ingrid authorized keys`
+#   sshkeys::manual { "ingrid":
+#     authorized_keys => "ingrid authorized keys",
+#     purge_unmanaged => true,
+#   }
+#
 # @param user User to install keys for
 # @param home Location of this user's home directory
 # @param group Group that will own the installed keys
+# @param purge_unmanaged Purge any unmanaged `id_rsa`, `id_rsa.pub`,
+#   `known_hosts`, `authorized_keys` files
+# @param purge_unmanaged_key Purge any unmanaged `known_hosts` file
 # @param id_rsa Content of the regular `id_rsa` (private key) file
 # @param id_rsa_file Source of the regular `id_rsa` (private key) file.  This can
 #   be any location understood by the puppet `file` resource
@@ -50,6 +66,7 @@ define sshkeys::manual(
   String                        $user                 = $title,
   String                        $home                 = "/home/${title}",
   Variant[Integer,String,Undef] $group                = undef,
+  Boolean                       $purge_unmanaged      = false,
   Optional[String]              $id_rsa               = undef,
   Optional[String]              $id_rsa_file          = undef,
   Optional[String]              $id_rsa_pub           = undef,
@@ -66,19 +83,28 @@ define sshkeys::manual(
     $_group = $user
   }
 
-  $id_rsa_present = pick($id_rsa, $id_rsa_file, false) ? {
+  $_purge_unmanaged = $purge_unmanaged ? {
+    true  => undef,
+    false => 'nopurge',
+  }
+
+  $id_rsa_present = pick($id_rsa, $id_rsa_file, $_purge_unmanaged, false) ? {
+    "nopurge" => undef,
     false   => 'absent',
     default => 'file'
   }
-  $id_rsa_pub_present = pick($id_rsa_pub, $id_rsa_pub_file, false) ? {
+  $id_rsa_pub_present = pick($id_rsa_pub, $id_rsa_pub_file, $_purge_unmanaged, false) ? {
+    "nopurge" => undef,
     false   => 'absent',
     default => 'file'
   }
-  $known_hosts_present = pick($known_hosts, $known_hosts_file, false) ? {
+  $known_hosts_present = pick($known_hosts, $known_hosts_file, $_purge_unmanaged, false) ? {
+    "nopurge" => undef,
     false   => 'absent',
     default => 'file'
   }
-  $authorized_keys_present = pick($authorized_keys, $authorized_keys_file, false) ? {
+  $authorized_keys_present = pick($authorized_keys, $authorized_keys_file, $_purge_unmanaged, false) ? {
+    "nopurge" => undef,
     false   => 'absent',
     default => 'file'
   }

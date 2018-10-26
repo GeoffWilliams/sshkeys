@@ -1,6 +1,6 @@
 # @PDQTest
 
-["alice", "bob"].each |$user| {
+["alice", "bob", "ingrid", "james"].each |$user| {
   user { $user:
     ensure => present,
   }
@@ -71,4 +71,15 @@ sshkeys::manual { "bob":
   known_hosts_file     => "/testcase/spec/mock/keys/known_hosts",
   authorized_keys_file => "/testcase/spec/mock/keys/bob/authorized_keys",
   group                => 1000,
+}
+
+# pre-existing keys should be deleted
+sshkeys::manual { "ingrid":
+  authorized_keys => "ingrid authorized keys",
+  purge_unmanaged => true,
+}
+
+# pre-existing keys should be preserved
+sshkeys::manual { "james":
+  authorized_keys => "james authorized keys",
 }

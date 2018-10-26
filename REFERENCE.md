@@ -223,10 +223,15 @@ Manage the `~/.ssh` directory and any or all of:
 For the given `user`, normally supplied in `title`.
 
 Files can be supplied:
-  * Inline - Write the supplied content directly to file (`file` resource `content`)
+  * Inline - Write the supplied content directly to file (`file` resource
+    `content`)
   * Filename - Write file using this URI (`file` resource `source`)
 
-It is an error to specify both `content` and `source`.
+It is an error to specify both `content` and `source`. Where content is not
+explicitly mananagd by this Puppet type, we will leave it alone and just fix
+permissions unless the `purge_unmanaged` parameter is set `true`, in which
+case any of the above files will be deleted if we were not supposed to set
+content inside them.
 
 #### Examples
 
@@ -250,6 +255,17 @@ sshkeys::manual { "bob":
   id_rsa_pub_file      => "/testcase/spec/mock/keys/bob/id_rsa.pub",
   known_hosts_file     => "/testcase/spec/mock/keys/known_hosts",
   authorized_keys_file => "/testcase/spec/mock/keys/bob/authorized_keys",
+}
+```
+
+##### Purge unmanaged SSH files
+
+```puppet
+# deletes Ingrid's `known_hosts`, `id_rsa`, `id_rsa.pub`) and sets content
+# of `authorized_keys` file to the string `ingrid authorized keys`
+sshkeys::manual { "ingrid":
+  authorized_keys => "ingrid authorized keys",
+  purge_unmanaged => true,
 }
 ```
 
@@ -280,6 +296,19 @@ Data type: `Variant[Integer,String,Undef]`
 Group that will own the installed keys
 
 Default value: `undef`
+
+##### `purge_unmanaged`
+
+Data type: `Boolean`
+
+Purge any unmanaged `id_rsa`, `id_rsa.pub`,
+`known_hosts`, `authorized_keys` files
+
+Default value: `false`
+
+##### `purge_unmanaged_key`
+
+Purge any unmanaged `known_hosts` file
 
 ##### `id_rsa`
 
